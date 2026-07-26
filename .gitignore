@@ -1,0 +1,21 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# macOS
+.DS_Store
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local/large project artifacts
+data/raw/
+data/cache/
+models/
+reference/
+
+# FastF1 cache directories
+cache/
+.fastf1-cache/
+fastf1_cache/
