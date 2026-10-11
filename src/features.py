@@ -279,10 +279,24 @@ def add_season_context(df: pd.DataFrame) -> pd.DataFrame:
 
 def build_modeling_dataset(
     raw_dir: Path | None = None,
+    *,
+    race_frame: pd.DataFrame | None = None,
+    quali_frame: pd.DataFrame | None = None,
+    quiet: bool = False,
 ) -> pd.DataFrame:
-    """Build the full V1 modeling dataset from raw Race + Qualifying CSVs."""
-    race_raw, quali = load_raw_results(raw_dir)
-    print_constructor_normalization(race_raw, normalize_constructors(race_raw))
+    """
+    Build the full V1 modeling dataset from raw Race + Qualifying CSVs.
+
+    Optional ``race_frame`` / ``quali_frame`` allow callers (e.g. Singapore pipeline)
+    to supply venue-normalized copies without writing raw CSVs.
+    """
+    if race_frame is None or quali_frame is None:
+        race_raw, quali = load_raw_results(raw_dir)
+    else:
+        race_raw, quali = race_frame, quali_frame
+
+    if not quiet:
+        print_constructor_normalization(race_raw, normalize_constructors(race_raw))
 
     race = normalize_constructors(race_raw)
     merged = merge_race_qualifying(race, quali)

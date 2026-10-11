@@ -124,16 +124,23 @@ def get_completed_grand_prix(
     return completed.reset_index(drop=True)
 
 
-def get_training_events(season: int, as_of: date | None = None) -> pd.DataFrame:
+def get_training_events(
+    season: int,
+    as_of: date | None = None,
+    *,
+    before_event: str | None = None,
+) -> pd.DataFrame:
     """
     Return Grand Prix events to ingest for a training season.
 
     2024 / 2025: all completed races.
-    2026: completed races strictly before the Hungarian GP.
+    2026: completed races strictly before ``before_event`` when provided;
+    otherwise completed races strictly before ``TARGET_EVENT`` (Hungary V1 default).
     """
     if season == TARGET_SEASON:
         schedule = get_event_schedule(season)
-        target_round = get_event_round(schedule, TARGET_EVENT)
+        cutoff_event = before_event or TARGET_EVENT
+        target_round = get_event_round(schedule, cutoff_event)
         return get_completed_grand_prix(
             season,
             before_round=target_round,
@@ -148,13 +155,16 @@ def load_session(
     season: int,
     round_number: int,
     session_type: str,
+    *,
+    load_messages: bool = False,
 ):
     """
     Load a FastF1 session with lightweight settings.
 
     Returns the loaded session, or None if the session does not exist.
     """
-    if session_type not in HISTORICAL_SESSION_TYPES and session_type not in ("FP1", "FP2", "FP3"):
+    _WEEKEND_SESSION_TYPES = ("FP1", "FP2", "FP3", "SQ", "S")
+    if session_type not in HISTORICAL_SESSION_TYPES and session_type not in _WEEKEND_SESSION_TYPES:
         raise ValueError(f"Unsupported session type: {session_type}")
 
     label = HISTORICAL_SESSION_TYPES.get(session_type, session_type)
@@ -171,7 +181,12 @@ def load_session(
         )
         return None
 
-    load_kwargs = RACE_LOAD_KWARGS if session_type == "R" else TIMING_LOAD_KWARGS
+    if session_type == "R":
+        load_kwargs = dict(RACE_LOAD_KWARGS)
+    else:
+        load_kwargs = dict(TIMING_LOAD_KWARGS)
+        if load_messages:
+            load_kwargs["messages"] = True
     try:
         session.load(**load_kwargs)
     except ValueError as exc:

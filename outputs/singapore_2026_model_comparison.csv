@@ -1,0 +1,9 @@
+split,configuration,model,mae,rmse,winner_accuracy,podium_hit_rate,train_rows,val_rows
+singapore_extended_val,PRE,GradientBoostingRegressor,3.7743227719679857,4.850529319729523,0.0,0.4444444444444444,1244.0,66
+singapore_extended_val,POST,GradientBoostingRegressor,3.7267886580036436,4.862781238798847,0.3333333333333333,0.6666666666666666,1244.0,66
+singapore_extended_val,PRE,RandomForestRegressor,3.7736731424036725,4.993028253039395,0.0,0.2222222222222222,1244.0,66
+singapore_extended_val,POST,RandomForestRegressor,3.6323065990446644,4.642913448790839,0.6666666666666666,0.6666666666666666,1244.0,66
+singapore_extended_val,PRE,XGBRegressor,3.7883465615185825,4.969483615680532,0.0,0.4444444444444444,1244.0,66
+singapore_extended_val,POST,XGBRegressor,3.8532544157721778,5.087806273983062,0.3333333333333333,0.4444444444444444,1244.0,66
+singapore_extended_val,baseline,qualifying_position,3.625,,,,,66
+singapore_extended_val,baseline,grid_position,3.6666666666666665,,,,,66
